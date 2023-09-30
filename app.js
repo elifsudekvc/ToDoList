@@ -10,6 +10,7 @@ runEvents()
 
 function runEvents(e) {
  form.addEventListener("submit",addToDo);
+ document.addEventListener("DOMContentLoaded",)
 };
 
 function addToDo(e) {
