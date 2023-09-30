@@ -5,13 +5,83 @@ const todoList = document.querySelector(".list-group");
 const firstCardBody = document.querySelectorAll(".card-body")[0];
 const secondCardBody = document.querySelectorAll(".card-body")[1];
 const clearButton = document.querySelector("#clearButton");
+const filterInput=document.querySelector("#todoSearch");
 let todos=[];
 runEvents()
 
 function runEvents(e) {
  form.addEventListener("submit",addToDo);
- document.addEventListener("DOMContentLoaded",)
+ document.addEventListener("DOMContentLoaded",pageLoaded);
+ secondCardBody.addEventListener("click",removeTodoToUI);
+ clearButton.addEventListener("click",allTodosEverywhere);
+ filterInput.addEventListener("keyup",filter);
 };
+
+function pageLoaded() {
+    checkTodosFromStorage();
+    todos.forEach(function(todo){
+        addToDoUI(todo);
+    });
+
+}
+
+function filter(e){
+
+    const filterValue=e.target.value.toLowerCase().trim();
+    console.log(filterValue);
+    const todoListesi =document.querySelectorAll(".list-group-item");
+    
+    if(todoListesi.length>0){
+        todoListesi.forEach(function(todo){
+            if(todo.textContent.toLowerCase().trim().includes(filterValue)){
+                todo.setAttribute("style", "display:block");
+            }else{
+                todo.setAttribute("style", "display:none !important");
+            }
+        });
+
+        
+    }else{
+        showAlert("warning","Arama yapabilmeniz için en az 1 todo olmalıdır.")
+    }
+};
+
+function allTodosEverywhere(){
+    const todoListesi = document.querySelectorAll(".list-group-item");
+    if(todoListesi.length>0){
+        todoListesi.forEach(function(todo){
+            todo.remove();
+        });
+
+        todos=[];
+        localStorage.setItem("todos",JSON.stringify(todos));
+        showAlert("success","Başarılı bir şekilde temizlendi");
+
+    }else{
+        showAlert("warning","Silmek için to do olması gerek.");
+    }
+
+}
+
+function removeTodoToUI(e){
+if(e.target.className==="fa fa-remove"){
+    const todo=e.target.parentElement.parentElement;
+    todo.remove();
+    //storagedan silme
+    removeTodoToStorage(todo.textContent);
+    showAlert("success","todo başarıyla silindi");
+}}
+
+function removeTodoToStorage(removeTodo){
+
+    todos.forEach(function(todo,index){
+
+        if(removeTodo===todo){
+            todos.splice(index,1);
+        }
+    });
+    localStorage.setItem("todos",JSON.stringify(todos));
+}
 
 function addToDo(e) {
     const inputText = addInput.value.trim();
@@ -65,7 +135,7 @@ function addToDoStorage(newToDo) {
 };
 
 function checkTodosFromStorage(){
-    if(todlocalStorage.getItem("todos")===null){
+    if(localStorage.getItem("todos")===null){
         todos=[];
     }else{
         todos=JSON.parse(localStorage.getItem("todos"));
@@ -85,6 +155,6 @@ firstCardBody.appendChild(div);
 setTimeout(function(){
 div.remove();
 
-},2500);
+},2000);
 
 }
